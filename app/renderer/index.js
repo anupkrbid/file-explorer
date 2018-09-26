@@ -6,6 +6,7 @@ const filemanager = document.querySelector('.filemanager');
 const nothingFound = filemanager.querySelector('.nothingfound');
 const breadcrumbs = document.querySelector('.breadcrumbs');
 const fileList = document.querySelector('.data');
+let breadcrumbsUrls = [];
 
 const listFilesAndDirectories = directoryPath => {
   const directoryListings = [];
@@ -27,7 +28,13 @@ const listFilesAndDirectories = directoryPath => {
     directoryListings.push(data);
   });
 
+  breadcrumbsUrls = generateBreadcrumbs(directoryPath);
   render(directoryListings);
+};
+
+// Splits a file path and turns it into clickable breadcrumbs
+const generateBreadcrumbs = nextDir => {
+  return nextDir.split(path.sep);
 };
 
 // This function escapes special html characters in names
@@ -135,20 +142,21 @@ render = files => {
   } else {
     fileList.classList.add('animated');
 
-    // breadcrumbsUrls.forEach(function(u, i) {
-    //   var name = u.split('/');
+    for (let i = 0; i < breadcrumbsUrls.length; i++) {
+      const breadcrumPathArray = breadcrumbsUrls.slice(0, i + 1);
+      const breadcrumPath = path.join(...breadcrumPathArray);
+      url += `
+        <a href="${breadcrumPath}">
+          <span class="folderName">
+            ${breadcrumbsUrls[i]}
+          </span>
+        </a>
+      `;
 
-    //   if (i !== breadcrumbsUrls.length - 1) {
-    //     url +=
-    //       '<a href="' +
-    //       u +
-    //       '"><span class="folderName">' +
-    //       name[name.length - 1] +
-    //       '</span></a> <span class="arrow">→</span> ';
-    //   } else {
-    //     url += '<span class="folderName">' + name[name.length - 1] + '</span>';
-    //   }
-    // });
+      if (!!breadcrumbsUrls[i + 1]) {
+        url += '<span class="arrow">&raquo</span> ';
+      }
+    }
   }
 
   breadcrumbs.innerHTML = '';
@@ -159,4 +167,5 @@ render = files => {
   // fileList.animate({ display: 'inline-block' });
 };
 
-listFilesAndDirectories(os.homedir());
+// listFilesAndDirectories(os.homedir() + '/Desktop');
+listFilesAndDirectories(path.join(os.homedir(), 'Desktop'));
