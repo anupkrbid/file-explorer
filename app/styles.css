@@ -65,6 +65,9 @@ body {
   font-weight: 700;
   line-height: 20px;
 }
+.breadcrumbs a span {
+  pointer-events: none;
+}
 
 /*-------------------------
 	Search box

@@ -63,6 +63,12 @@ const getSubDirectoryCount = count => {
   return 'Empty';
 };
 
+// Clicking on breadcrumbs
+breadcrumbs.addEventListener('click', function(event) {
+  event.preventDefault();
+  listFilesAndDirectories(event.target.dataset.href);
+});
+
 // Render the HTML for the file manager
 render = files => {
   const scannedFolders = [],
@@ -133,7 +139,6 @@ render = files => {
   }
 
   // Generate the breadcrumbs
-
   let url = '';
 
   if (filemanager.classList.contains('searching')) {
@@ -146,7 +151,7 @@ render = files => {
       const breadcrumPathArray = breadcrumbsUrls.slice(0, i + 1);
       const breadcrumPath = path.join(...breadcrumPathArray);
       url += `
-        <a href="${breadcrumPath}">
+        <a href="#" data-href="${breadcrumPath}">
           <span class="folderName">
             ${breadcrumbsUrls[i]}
           </span>
