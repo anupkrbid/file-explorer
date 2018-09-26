@@ -4,7 +4,9 @@
   "description": "A simple File Explorer app created using Electron.js",
   "main": "app/main/index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "npm run package:current-platform",
+    "package:current-platform": "electron-packager . file-explorer --overwrite --asar --prune=true --out=build"
   },
   "repository": {
     "type": "git",

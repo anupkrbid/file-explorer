@@ -35,15 +35,19 @@ const listFilesAndDirectories = directoryPath => {
       directoryListings.push(data);
     });
 
+    fileList.classList.remove('animated');
     breadcrumbsUrls = generateBreadcrumbs(directoryPath);
     render(directoryListings);
   } catch (error) {
-    Notification.requestPermission().then(result => {
-      shell.beep();
-      // new Notification('Permission Denied', {
-      //   body: 'You dont have permission to access this folder'
-      // });
-    });
+    const notification = {
+      title: 'Permission Denied',
+      body: 'You dont have permission to access this folder'
+    };
+    shell.beep();
+    const myNotification = new window.Notification(
+      notification.title,
+      notification
+    );
   }
 };
 
@@ -89,7 +93,7 @@ breadcrumbs.addEventListener('click', function(event) {
 // Clicking on File or Folder
 fileList.addEventListener('click', function(event) {
   event.preventDefault();
-  if (JSON.parse(event.target.dataset.directory)) {
+  if (event.target.dataset.directory === 'true') {
     listFilesAndDirectories(event.target.dataset.href);
   } else {
     shell.openItem(event.target.dataset.href);
@@ -195,11 +199,6 @@ render = files => {
 
   breadcrumbs.innerHTML = '';
   breadcrumbs.innerHTML = url;
-
-  // Show the generated elements
-
-  // fileList.animate({ display: 'inline-block' });
 };
 
-// listFilesAndDirectories(os.homedir());
-listFilesAndDirectories(path.join(os.homedir(), 'Desktop'));
+listFilesAndDirectories(os.homedir());
