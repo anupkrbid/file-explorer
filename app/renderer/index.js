@@ -20,8 +20,12 @@ const listFilesAndDirectories = directoryPath => {
       isDirectory: stats.isDirectory()
     };
     if (data.isDirectory) {
-      // data.subDirectoryLength = fs.readdirSync(data.path).length;
       data.subDirectoryLength = 0;
+      try {
+        data.subDirectoryLength = fs.readdirSync(data.path).length;
+      } catch (error) {
+        data.subDirectoryLength = -1;
+      }
     } else {
       data.size = bytesToSize(stats.size);
     }
@@ -55,10 +59,12 @@ const bytesToSize = bytes => {
 
 // Construct the name depending on number of items in the sub directory
 const getSubDirectoryCount = count => {
-  if (count == 1) {
-    return `${count} ' item'`;
+  if (count === -1) {
+    return 'Permision Denied';
+  } else if (count === 1) {
+    return `${count} item`;
   } else if (count > 1) {
-    return `${count} ' items'`;
+    return `${count} items`;
   }
   return 'Empty';
 };
@@ -172,5 +178,5 @@ render = files => {
   // fileList.animate({ display: 'inline-block' });
 };
 
-// listFilesAndDirectories(os.homedir() + '/Desktop');
-listFilesAndDirectories(path.join(os.homedir(), 'Desktop'));
+listFilesAndDirectories(os.homedir());
+// listFilesAndDirectories(path.join(os.homedir(), 'Desktop'));
