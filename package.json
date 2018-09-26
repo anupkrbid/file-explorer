@@ -1,0 +1,25 @@
+{
+  "name": "file-explorer",
+  "version": "1.0.0",
+  "description": "A simple File Explorer app created using Electron.js",
+  "main": "app/main/index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anupkrbid/file-explorer.git"
+  },
+  "keywords": [],
+  "author": "Anup Kumar Bid",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anupkrbid/file-explorer/issues"
+  },
+  "homepage": "https://github.com/anupkrbid/file-explorer#readme",
+  "devDependencies": {
+    "electron": "^3.0.0",
+    "electron-packager": "^12.1.2",
+    "extract-zip": "^1.6.7"
+  }
+}

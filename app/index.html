@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <link href="styles.css" rel="stylesheet" />
+
+  <title>File Explorer</title>
+</head>
+
+<body>
+
+  <div class="filemanager">
+
+    <div class="search">
+      <input type="search" placeholder="Find a file.." />
+    </div>
+
+    <div class="breadcrumbs"></div>
+
+    <ul class="data"></ul>
+
+    <div class="nothingfound">
+      <div class="nofiles"></div>
+      <span>No files here.</span>
+    </div>
+
+  </div>
+
+  <footer>
+    <a class="tz" href="http://tutorialzine.com/2014/09/cute-file-browser-jquery-ajax-php/">Cute File Browser with
+      jQuery, AJAX and PHP</a>
+    <div id="tzine-actions"></div>
+    <span class="close"></span>
+  </footer>
+
+  <script>
+    require('./renderer');
+  </script>
+
+</body>
+
+</html>
