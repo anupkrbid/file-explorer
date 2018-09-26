@@ -1,6 +1,7 @@
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
+const { shell } = require('electron');
 
 const filemanager = document.querySelector('.filemanager');
 const nothingFound = filemanager.querySelector('.nothingfound');
@@ -10,30 +11,40 @@ let breadcrumbsUrls = [];
 
 const listFilesAndDirectories = directoryPath => {
   const directoryListings = [];
-  const files = fs.readdirSync(directoryPath);
 
-  files.forEach(file => {
-    const stats = fs.statSync(path.join(directoryPath, file));
-    const data = {
-      name: file,
-      path: path.join(directoryPath, file),
-      isDirectory: stats.isDirectory()
-    };
-    if (data.isDirectory) {
-      data.subDirectoryLength = 0;
-      try {
-        data.subDirectoryLength = fs.readdirSync(data.path).length;
-      } catch (error) {
-        data.subDirectoryLength = -1;
+  try {
+    const files = fs.readdirSync(directoryPath);
+
+    files.forEach(file => {
+      const stats = fs.statSync(path.join(directoryPath, file));
+      const data = {
+        name: file,
+        path: path.join(directoryPath, file),
+        isDirectory: stats.isDirectory()
+      };
+      if (data.isDirectory) {
+        data.subDirectoryLength = 0;
+        try {
+          data.subDirectoryLength = fs.readdirSync(data.path).length;
+        } catch (error) {
+          data.subDirectoryLength = -1;
+        }
+      } else {
+        data.size = bytesToSize(stats.size);
       }
-    } else {
-      data.size = bytesToSize(stats.size);
-    }
-    directoryListings.push(data);
-  });
+      directoryListings.push(data);
+    });
 
-  breadcrumbsUrls = generateBreadcrumbs(directoryPath);
-  render(directoryListings);
+    breadcrumbsUrls = generateBreadcrumbs(directoryPath);
+    render(directoryListings);
+  } catch (error) {
+    Notification.requestPermission().then(result => {
+      shell.beep();
+      // new Notification('Permission Denied', {
+      //   body: 'You dont have permission to access this folder'
+      // });
+    });
+  }
 };
 
 // Splits a file path and turns it into clickable breadcrumbs
@@ -69,10 +80,20 @@ const getSubDirectoryCount = count => {
   return 'Empty';
 };
 
-// Clicking on breadcrumbs
+// Clicking on Breadcrumbs
 breadcrumbs.addEventListener('click', function(event) {
   event.preventDefault();
   listFilesAndDirectories(event.target.dataset.href);
+});
+
+// Clicking on File or Folder
+fileList.addEventListener('click', function(event) {
+  event.preventDefault();
+  if (JSON.parse(event.target.dataset.directory)) {
+    listFilesAndDirectories(event.target.dataset.href);
+  } else {
+    shell.openItem(event.target.dataset.href);
+  }
 });
 
 // Render the HTML for the file manager
@@ -109,7 +130,8 @@ render = files => {
 
       const folderHTML = `
         <li class="folders">
-          <a href="${folder.path}" title="${folder.path}" class="folders">
+          <a href="#" data-href="${folder.path}" 
+            title="${folder.path}" data-directory="true" class="folders">
             ${icon}
             <span class="name">${name}</span>
             <span class="details">${getSubDirectoryCount(itemsLength)}</span>
@@ -132,7 +154,8 @@ render = files => {
 
       const fileHTML = `
         <li class="files">
-          <a href="${file.path}" title="${file.path}" class="files">
+          <a href="#" data-href="${file.path}" 
+            title="${file.path}" data-directory="false" class="files">
             ${icon}
             <span class="name">${name}</span>
             <span class="details">${file.size}</span>
@@ -178,5 +201,5 @@ render = files => {
   // fileList.animate({ display: 'inline-block' });
 };
 
-listFilesAndDirectories(os.homedir());
-// listFilesAndDirectories(path.join(os.homedir(), 'Desktop'));
+// listFilesAndDirectories(os.homedir());
+listFilesAndDirectories(path.join(os.homedir(), 'Desktop'));
